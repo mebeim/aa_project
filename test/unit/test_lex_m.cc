@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(order_is_minimal) {
  */
 BOOST_AUTO_TEST_CASE(order_is_perfect_for_chordal_graphs) {
 	REPEAT(10) {
-		Graph g = gen_random_chordal_graph<Graph>(100, 3000);
+		Graph g = gen_random_chordal_graph<Graph>(200, 10000);
 		auto o = lex_m(g);
 		auto f = fill_in(g, o);
 
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(order_is_perfect_for_chordal_graphs) {
 BOOST_AUTO_TEST_CASE(order_is_perfect_for_complete_graphs) {
 	REPEAT(10) {
 		// edge_prob = 1 => complete graph
-		Graph g = gen_random_connected_graph<Graph>(100, 1);
+		Graph g = gen_random_connected_graph<Graph>(200, 1);
 
 		auto o = lex_m(g);
 		auto f = fill_in(g, o);
