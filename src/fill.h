@@ -76,7 +76,6 @@ EdgeSet<Graph> fill_in(const Graph &g, const VertexOrder<Graph> &order) {
 	typedef typename VertexOrder<Graph>::value_type Vertex;
 	typedef typename VertexOrder<Graph>::size_type Index;
 
-	BOOST_CONCEPT_ASSERT((boost::MutableGraphConcept<Graph>));
 	BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept<Graph>));
 	BOOST_CONCEPT_ASSERT((boost::AdjacencyGraphConcept<Graph>));
 
