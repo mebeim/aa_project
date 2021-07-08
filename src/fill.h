@@ -1,3 +1,11 @@
+/**
+ * Implementation of the FILL algorithm described by Rose & Tarjan in
+ * "Algorithmic aspects of vertex elimination on graphs", plus other utility
+ * functions using the same algorithm.
+ *
+ * See: https://doi.org/10.1137/0205021
+ */
+
 #ifndef ALGO_FILL_H
 #define ALGO_FILL_H
 
@@ -31,6 +39,8 @@ void fill(Graph &g, const VertexOrder<Graph> &order) {
 	for (Index i = 0; i < order.size(); i++)
 		index_of[order[i]] = i;
 
+	// Compute initial sets of successors: w is successor of v iff v--w and v
+	// comes before w in the given order
 	for (const auto v : iter_vertices(g)) {
 		for (auto w : iter_neighbors(g, v)) {
 			if (index_of[v] < index_of[w])
@@ -38,11 +48,13 @@ void fill(Graph &g, const VertexOrder<Graph> &order) {
 		}
 	}
 
+	// For each vertex v in the order
 	for (auto it = order.begin(); it != order.end() - 1; it++) {
 		const Vertex v = *it;
 		Index min_index = n_vertices;
 		Vertex min;
 
+		// Find min as the closest successor of v in the order
 		for (auto w : succ[v]) {
 			if (index_of[w] < min_index)
 				min_index = index_of[w];
@@ -50,6 +62,8 @@ void fill(Graph &g, const VertexOrder<Graph> &order) {
 
 		min = order[min_index];
 
+		// Mark any other successor of v as a successor of min, and add edges
+		// to the graph as necessary (i.e. edges of the deficiency of v)
 		for (const auto w : succ[v]) {
 			if (w != min && succ[min].find(w) == succ[min].end()) {
 				succ[min].insert(w);
@@ -87,6 +101,8 @@ EdgeSet<Graph> fill_in(const Graph &g, const VertexOrder<Graph> &order) {
 	for (Index i = 0; i < order.size(); i++)
 		index_of[order[i]] = i;
 
+	// Compute initial sets of successors: w is successor of v iff v--w and v
+	// comes before w in the given order
 	for (const auto v : iter_vertices(g)) {
 		for (auto w : iter_neighbors(g, v)) {
 			if (index_of[v] < index_of[w])
@@ -94,11 +110,13 @@ EdgeSet<Graph> fill_in(const Graph &g, const VertexOrder<Graph> &order) {
 		}
 	}
 
+	// For each vertex v in the order
 	for (auto it = order.begin(); it != order.end() - 1; it++) {
 		const Vertex v = *it;
 		Index min_index = n_vertices;
 		Vertex min;
 
+		// Find min as the closest successor of v in the order
 		for (auto w : succ[v]) {
 			if (index_of[w] < min_index)
 				min_index = index_of[w];
@@ -106,6 +124,8 @@ EdgeSet<Graph> fill_in(const Graph &g, const VertexOrder<Graph> &order) {
 
 		min = order[min_index];
 
+		// Mark any other successor of v as a successor of min, and add new
+		// edges to the fill-in as necessary
 		for (const auto w : succ[v]) {
 			if (w != min && succ[min].find(w) == succ[min].end()) {
 				succ[min].insert(w);
@@ -147,6 +167,8 @@ bool is_perfect_elimination_order(const Graph &g, const VertexOrder<Graph> &orde
 	for (Index i = 0; i < order.size(); i++)
 		index_of[order[i]] = i;
 
+	// Compute initial sets of successors: w is successor of v iff v--w and v
+	// comes before w in the given order
 	for (const auto v : iter_vertices(g)) {
 		for (auto w : iter_neighbors(g, v)) {
 			if (index_of[v] < index_of[w])
@@ -154,11 +176,13 @@ bool is_perfect_elimination_order(const Graph &g, const VertexOrder<Graph> &orde
 		}
 	}
 
+	// For each vertex v in the order
 	for (auto it = order.begin(); it != order.end() - 1; it++) {
 		const Vertex v = *it;
 		Index min_index = n_vertices;
 		Vertex min;
 
+		// Find min as the closest successor of v in the order
 		for (auto w : succ[v]) {
 			if (index_of[w] < min_index)
 				min_index = index_of[w];
@@ -166,6 +190,9 @@ bool is_perfect_elimination_order(const Graph &g, const VertexOrder<Graph> &orde
 
 		min = order[min_index];
 
+		// If there is any other successor w of v that is not also a successor
+		// of min then the given order was not a perfect elimination order, as
+		// the edge min--w would be part of the deficiency of v.
 		for (const auto w : succ[v]) {
 			if (w != min && succ[min].find(w) == succ[min].end())
 				return false;

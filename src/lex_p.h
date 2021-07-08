@@ -1,3 +1,10 @@
+/**
+ * Implementation of the LEX P algorithm described by Rose & Tarjan in
+ * "Algorithmic aspects of vertex elimination on graphs".
+ *
+ * See: https://doi.org/10.1137/0205021
+ */
+
 #ifndef ALGO_LEXP_H
 #define ALGO_LEXP_H
 
@@ -10,9 +17,9 @@
 #include "utils.h"
 
 /**
- * Compute a perfect elimination order of the given perfect elimination graph.
+ * Compute a perfect elimination order for the given perfect elimination graph.
  *
- * @param  g graph to compute the order of
+ * @param  g graph to compute the order for
  * @return a perfect elimination order for the graph as an ordered sequence of
  *         all its vertices
  *
@@ -55,15 +62,19 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 	std::unordered_map<Label *, Label *> fix;
 	LabeledVertex *cur_vertex;
 
+	// Assign the empty label to all the vertices of the graph
 	for (const auto id : iter_vertices(g)) {
 		LabeledVertex *v = new LabeledVertex(id, head);
 		head->vertex_map[id] = v;
 		unordered[id] = v;
 	}
 
+	// Number each vertex of the graph in reverse order
 	for (auto index = n_vertices - 1; index < n_vertices; index--) {
 		cur_vertex = nullptr;
 
+		// Find cur_vertex as the highest-labeled unnumbered vertex scanning the
+		// linked list of labels
 		for (auto label = head; !cur_vertex && label; label = label->next) {
 			for (const auto [id, v] : label->vertex_map) {
 				auto it = unordered.find(id);
@@ -76,13 +87,18 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 			}
 		}
 
+		// Assign index to cur_vertex
 		assert(cur_vertex);
 		order[index] = cur_vertex->id;
 
+		// For each unnumbered neighbor of the current vertex
 		for (const auto neighbor_id : iter_neighbors(g, cur_vertex->id)) {
 			auto it = unordered.find(neighbor_id);
 
 			if (it != unordered.end()) {
+				// Create a new label (if not already created) which preceeds
+				// the current neighbor's label of exactly one position in the
+				// list of labels
 				auto neighbor = (*it).second;
 				auto prev_it = fix.find(neighbor->label);
 				Label *new_label;
@@ -94,12 +110,15 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 					fix[neighbor->label] = new_label;
 				}
 
+				// Remove this neighbor from its current label and assign it to
+				// the newly created label
 				neighbor->label->vertex_map.erase(neighbor_id);
 				neighbor->label = new_label;
 				neighbor->label->vertex_map[neighbor_id] = neighbor;
 			}
 		}
 
+		// Add newly created labels to the list
 		for (const auto [label, new_label] : fix) {
 			if (label->prev)
 				label->prev->next = new_label;
