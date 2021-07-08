@@ -57,7 +57,7 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 
 	const auto n_vertices = boost::num_vertices(g);
 	Label *head = new Label(n_vertices);
-	LabeledVertexMap unordered(n_vertices);
+	LabeledVertexMap unnumbered(n_vertices);
 	VertexOrder<Graph> order(n_vertices);
 	std::unordered_map<Label *, Label *> fix;
 	LabeledVertex *cur_vertex;
@@ -66,7 +66,7 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 	for (const auto id : iter_vertices(g)) {
 		LabeledVertex *v = new LabeledVertex(id, head);
 		head->vertex_map[id] = v;
-		unordered[id] = v;
+		unnumbered[id] = v;
 	}
 
 	// Number each vertex of the graph in reverse order
@@ -77,11 +77,11 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 		// linked list of labels
 		for (auto label = head; !cur_vertex && label; label = label->next) {
 			for (const auto [id, v] : label->vertex_map) {
-				auto it = unordered.find(id);
+				auto it = unnumbered.find(id);
 
-				if (it != unordered.end()) {
+				if (it != unnumbered.end()) {
 					cur_vertex = v;
-					unordered.erase(it);
+					unnumbered.erase(it);
 					break;
 				}
 			}
@@ -93,9 +93,9 @@ VertexOrder<Graph> lex_p(const Graph &g) {
 
 		// For each unnumbered neighbor of the current vertex
 		for (const auto neighbor_id : iter_neighbors(g, cur_vertex->id)) {
-			auto it = unordered.find(neighbor_id);
+			auto it = unnumbered.find(neighbor_id);
 
-			if (it != unordered.end()) {
+			if (it != unnumbered.end()) {
 				// Create a new label (if not already created) which preceeds
 				// the current neighbor's label of exactly one position in the
 				// list of labels

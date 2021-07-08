@@ -38,7 +38,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 	BOOST_CONCEPT_ASSERT((boost::AdjacencyGraphConcept<Graph>));
 
 	const auto n_vertices = boost::num_vertices(g);
-	VertexSet unordered = std::make_from_tuple<VertexSet>(boost::vertices(g));
+	VertexSet unnumbered = std::make_from_tuple<VertexSet>(boost::vertices(g));
 	Label n_unique_labels = 1;
 	VertexOrder<Graph> order(n_vertices);
 	std::unordered_map<Vertex, Label> label(n_vertices);
@@ -46,12 +46,12 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 	VertexSet reached;
 
 	// Start with any vertex
-	Vertex cur_vertex = *unordered.begin();
+	Vertex cur_vertex = *unnumbered.begin();
 
 	// Number each vertex of the graph in reverse order
 	for (size_t index = n_vertices - 1; index < n_vertices; index--) {
 		// Assign index to cur_vertex
-		unordered.erase(cur_vertex);
+		unnumbered.erase(cur_vertex);
 		order[index] = cur_vertex;
 
 		to_reach.clear();
@@ -60,7 +60,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 		// Mark each neighbor of cur_vertex as reached and increment its label,
 		// while also adding it to the queue for reaching other vertices
 		for (const auto v : iter_neighbors(g, cur_vertex)) {
-			if (unordered.find(v) != unordered.end()) {
+			if (unnumbered.find(v) != unnumbered.end()) {
 				reached.insert(v);
 				to_reach[label[v]].push_back(v);
 				label[v]++;
@@ -79,7 +79,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 
 				// For all neighbors of the vertex
 				for (const auto w : iter_neighbors(g, v)) {
-					if (unordered.find(w) != unordered.end() && reached.find(w) == reached.end()) {
+					if (unnumbered.find(w) != unnumbered.end() && reached.find(w) == reached.end()) {
 						reached.insert(w);
 
 						if (label[w] > l) {
@@ -98,13 +98,13 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 			}
 		}
 
-		if (unordered.empty())
+		if (unnumbered.empty())
 			break;
 
 		// Sort and recompute the labels of all unnumbered vertices to be
 		// [0, 2, ..., 2 * n_unique_labels) while also counting the number of
 		// unique labels
-		std::vector<Vertex> to_relabel(unordered.begin(), unordered.end());
+		std::vector<Vertex> to_relabel(unnumbered.begin(), unnumbered.end());
 		radix_sort(to_relabel.begin(), to_relabel.end(), label);
 
 		Label prev_label = label[to_relabel.front()];
