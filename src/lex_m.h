@@ -39,8 +39,6 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 	VertexSet reached;
 
 	for (size_t index = n_vertices - 1; index < n_vertices; index--) {
-		auto max_label = 2 * (n_unique_labels - 1);
-
 		unordered.erase(cur_vertex);
 		order[index] = cur_vertex;
 
@@ -54,7 +52,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 			}
 		}
 
-		for (auto l = max_label; l < max_label; l -= 2) {
+		for (Label l = 0; l < 2 * n_unique_labels; l += 2) {
 			while (!reach[l].empty()) {
 				const auto it = reach[l].begin();
 				const auto v  = *it;
@@ -80,8 +78,8 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 		std::vector<Vertex> to_relabel(unordered.begin(), unordered.end());
 		radix_sort(to_relabel.begin(), to_relabel.end(), label);
 
-		Label prev_label = to_relabel.front();
-		n_unique_labels = 0;
+		Label prev_label = label[to_relabel.front()];
+		n_unique_labels = 1;
 
 		for (const auto v : to_relabel) {
 			if (label[v] != prev_label) {
@@ -89,7 +87,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 				prev_label = label[v];
 			}
 
-			label[v] = 2 * n_unique_labels;
+			label[v] = 2 * (n_unique_labels - 1);
 		}
 
 		cur_vertex = to_relabel.back();
