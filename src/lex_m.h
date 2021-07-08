@@ -10,6 +10,7 @@
 
 #include <limits>
 #include <vector>
+#include <deque>
 #include <unordered_map>
 #include <unordered_set>
 #include <boost/graph/graph_concepts.hpp>
@@ -41,7 +42,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 	Label n_unique_labels = 1;
 	VertexOrder<Graph> order(n_vertices);
 	std::unordered_map<Vertex, Label> label(n_vertices);
-	std::unordered_map<Label, VertexSet> reach;
+	std::unordered_map<Label, std::deque<Vertex>> to_reach;
 	VertexSet reached;
 
 	// Start with any vertex
@@ -53,7 +54,7 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 		unordered.erase(cur_vertex);
 		order[index] = cur_vertex;
 
-		reach.clear();
+		to_reach.clear();
 		reached.clear();
 
 		// Mark each neighbor of cur_vertex as reached and increment its label,
@@ -61,20 +62,20 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 		for (const auto v : iter_neighbors(g, cur_vertex)) {
 			if (unordered.find(v) != unordered.end()) {
 				reached.insert(v);
-				reach[label[v]++].insert(v);
+				to_reach[label[v]].push_back(v);
+				label[v]++;
 			}
 		}
 
-		// Explore all unnumbered vertices of the graph in order, following
+		// Explore all unnumbered vertices of the graph in BFS order, following
 		// the chains of vertices from lowest to highest maximum label
 		for (Label l = 0; l < 2 * n_unique_labels; l += 2) {
 			// While we have vertices to reach with chains of maximum label up
 			// to l
-			while (!reach[l].empty()) {
-				const auto it = reach[l].begin();
-				const auto v  = *it;
+			while (!to_reach[l].empty()) {
+				const auto v = to_reach[l].front();
 
-				reach[l].erase(it);
+				to_reach[l].pop_front();
 
 				// For all neighbors of the vertex
 				for (const auto w : iter_neighbors(g, v)) {
@@ -84,13 +85,13 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 						if (label[w] > l) {
 							// We reached this vertex with a chain of lower
 							// labeled vertives, increase its label
-							reach[label[w]].insert(w);
+							to_reach[label[w]].push_back(w);
 							label[w]++;
 						} else {
 							// We reached this vertex, but with a chain of
 							// vertices with some higher-or-equal labels, add it
 							// to the queue to be explored later
-							reach[l].insert(w);
+							to_reach[l].push_back(w);
 						}
 					}
 				}
@@ -100,9 +101,9 @@ VertexOrder<Graph> lex_m(const Graph &g) {
 		if (unordered.empty())
 			break;
 
-
-		// Sort and recompute all labels to be [0, 2, 2 * n_unique_labels) while
-		// also counting the number of unique labels
+		// Sort and recompute the labels of all unnumbered vertices to be
+		// [0, 2, ..., 2 * n_unique_labels) while also counting the number of
+		// unique labels
 		std::vector<Vertex> to_relabel(unordered.begin(), unordered.end());
 		radix_sort(to_relabel.begin(), to_relabel.end(), label);
 
