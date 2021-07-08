@@ -5,7 +5,6 @@
 #ifndef RANDOM_GRAPH_H
 #define RANDOM_GRAPH_H
 
-#include <iostream>
 #include <random>
 #include <functional>
 #include <vector>
