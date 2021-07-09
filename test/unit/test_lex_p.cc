@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_SUITE(LexP)
  */
 BOOST_AUTO_TEST_CASE(order_is_perfect_for_chordal_graphs) {
 	REPEAT(10) {
-		Graph g = gen_random_chordal_graph<Graph>(500, 7000);
+		Graph g = gen_random_chordal_graph<Graph>(500, 75000);
 		auto o = lex_p(g);
 		auto f = fill_in(g, o);
 
