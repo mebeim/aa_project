@@ -9,6 +9,10 @@
 #ifndef ALGO_FILL_H
 #define ALGO_FILL_H
 
+#include <utility>
+#include <unordered_set>
+#include <unordered_map>
+
 #include "utils.h"
 
 /**
@@ -42,7 +46,7 @@ void fill(Graph &g, const VertexOrder<Graph> &order) {
 	// Compute initial sets of successors: w is successor of v iff v--w and v
 	// comes before w in the given order
 	for (const auto v : iter_vertices(g)) {
-		for (auto w : iter_neighbors(g, v)) {
+		for (const auto w : iter_neighbors(g, v)) {
 			if (index_of[v] < index_of[w])
 				succ[v].insert(w);
 		}
@@ -52,22 +56,22 @@ void fill(Graph &g, const VertexOrder<Graph> &order) {
 	for (auto it = order.begin(); it != order.end() - 1; it++) {
 		const Vertex v = *it;
 		Index min_index = n_vertices;
-		Vertex min;
+		Vertex closest;
 
-		// Find min as the closest successor of v in the order
-		for (auto w : succ[v]) {
+		// Find the closest successor of v in the order
+		for (const auto w : succ[v]) {
 			if (index_of[w] < min_index)
 				min_index = index_of[w];
 		}
 
-		min = order[min_index];
+		closest = order[min_index];
 
-		// Mark any other successor of v as a successor of min, and add edges
+		// Mark any other successor of v as a successor of closest and add edges
 		// to the graph as necessary (i.e. edges of the deficiency of v)
 		for (const auto w : succ[v]) {
-			if (w != min && succ[min].find(w) == succ[min].end()) {
-				succ[min].insert(w);
-				boost::add_edge(min, w, g);
+			if (w != closest && succ[closest].find(w) == succ[closest].end()) {
+				succ[closest].insert(w);
+				boost::add_edge(closest, w, g);
 			}
 		}
 	}
@@ -104,7 +108,7 @@ EdgeSet<Graph> fill_in(const Graph &g, const VertexOrder<Graph> &order) {
 	// Compute initial sets of successors: w is successor of v iff v--w and v
 	// comes before w in the given order
 	for (const auto v : iter_vertices(g)) {
-		for (auto w : iter_neighbors(g, v)) {
+		for (const auto w : iter_neighbors(g, v)) {
 			if (index_of[v] < index_of[w])
 				succ[v].insert(w);
 		}
@@ -114,26 +118,26 @@ EdgeSet<Graph> fill_in(const Graph &g, const VertexOrder<Graph> &order) {
 	for (auto it = order.begin(); it != order.end() - 1; it++) {
 		const Vertex v = *it;
 		Index min_index = n_vertices;
-		Vertex min;
+		Vertex closest;
 
-		// Find min as the closest successor of v in the order
-		for (auto w : succ[v]) {
+		// Find the closest successor of v in the order
+		for (const auto w : succ[v]) {
 			if (index_of[w] < min_index)
 				min_index = index_of[w];
 		}
 
-		min = order[min_index];
+		closest = order[min_index];
 
-		// Mark any other successor of v as a successor of min, and add new
+		// Mark any other successor of v as a successor of closest and add new
 		// edges to the fill-in as necessary
 		for (const auto w : succ[v]) {
-			if (w != min && succ[min].find(w) == succ[min].end()) {
-				succ[min].insert(w);
+			if (w != closest && succ[closest].find(w) == succ[closest].end()) {
+				succ[closest].insert(w);
 
-				if (min < w)
-					fill_in_edges.emplace(min, w);
+				if (closest < w)
+					fill_in_edges.emplace(closest, w);
 				else
-					fill_in_edges.emplace(w, min);
+					fill_in_edges.emplace(w, closest);
 			}
 		}
 	}
@@ -170,7 +174,7 @@ bool is_perfect_elimination_order(const Graph &g, const VertexOrder<Graph> &orde
 	// Compute initial sets of successors: w is successor of v iff v--w and v
 	// comes before w in the given order
 	for (const auto v : iter_vertices(g)) {
-		for (auto w : iter_neighbors(g, v)) {
+		for (const auto w : iter_neighbors(g, v)) {
 			if (index_of[v] < index_of[w])
 				succ[v].insert(w);
 		}
@@ -180,21 +184,21 @@ bool is_perfect_elimination_order(const Graph &g, const VertexOrder<Graph> &orde
 	for (auto it = order.begin(); it != order.end() - 1; it++) {
 		const Vertex v = *it;
 		Index min_index = n_vertices;
-		Vertex min;
+		Vertex closest;
 
-		// Find min as the closest successor of v in the order
-		for (auto w : succ[v]) {
+		// Find the closest successor of v in the order
+		for (const auto w : succ[v]) {
 			if (index_of[w] < min_index)
 				min_index = index_of[w];
 		}
 
-		min = order[min_index];
+		closest = order[min_index];
 
 		// If there is any other successor w of v that is not also a successor
-		// of min then the given order was not a perfect elimination order, as
-		// the edge min--w would be part of the deficiency of v.
+		// of closest then the given order was not a perfect elimination order,
+		// as the edge closest--w would be part of the deficiency of v.
 		for (const auto w : succ[v]) {
-			if (w != min && succ[min].find(w) == succ[min].end())
+			if (w != closest && succ[closest].find(w) == succ[closest].end())
 				return false;
 		}
 	}
