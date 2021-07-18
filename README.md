@@ -1,6 +1,9 @@
 Algorithmic aspects of vertex elimination on graphs
 ===================================================
 
+[![license][license-badge]][license-link]
+[![ci][ci-badge]][ci-link]
+
 This repo contains the optional project for the Advanced Algorithms part of the
 Computer Science and Engineering Master's Degree course
 [*Advanced Algorithms and Parallel Programming* (095946 - A.Y. 2020/21)][course]
@@ -98,3 +101,7 @@ make run_benchmarks
 [wiki-chordal-graph]:      https://en.wikipedia.org/wiki/Chordal_graph
 [wiki-chordal-completion]: https://en.wikipedia.org/wiki/Chordal_completion
 [wiki-lex-p]:              https://en.wikipedia.org/wiki/Lexicographic_breadth-first_search
+[license-badge]:           https://img.shields.io/badge/License-Apache--2.0-blue
+[license-link]:            https://github.com/mebeim/aa_project/blob/master/LICENSE
+[ci-badge]:                https://github.com/mebeim/aa_project/actions/workflows/ci.yml/badge.svg
+[ci-link]:                 https://github.com/mebeim/aa_project/actions/workflows/ci.yml
