@@ -14,7 +14,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <boost/pending/disjoint_sets.hpp>
-#include <boost/range/adaptors.hpp>
 #include <boost/graph/connected_components.hpp>
 
 #include "utils.h"
@@ -97,7 +96,7 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 	static std::uniform_int_distribution<unsigned> dist;
 	static auto randuint = std::bind(dist, gen);
 
-	std::unordered_map<unsigned, std::vector<unsigned>> cliques;
+	std::vector<std::vector<unsigned>> cliques(2);
 	std::deque<std::tuple<unsigned, unsigned, unsigned>> L;
 	unsigned m = 0;
 	unsigned l = 1;
@@ -107,19 +106,17 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 	// Expand cliques
 	for (unsigned v = 2; v <= n_vertices; v++) {
 		const auto i = randuint() % l + 1;
-		auto &ci = cliques[i];
-		const auto t = randuint() % ci.size() + 1;
+		const auto t = randuint() % cliques[i].size() + 1;
 
-		if (t == ci.size()) {
-			ci.push_back(v);
+		if (t == cliques[i].size()) {
+			cliques[i].push_back(v);
 		} else {
 			l++;
-			auto &cl = cliques[l];
+			cliques.emplace_back();
 
-			cl.clear();
-			cl.reserve(t + 1);
-			cl.push_back(v);
-			std::copy(ci.begin(), ci.end(), std::back_inserter(cl));
+			cliques[l].clear();
+			cliques[l].push_back(v);
+			std::copy(cliques[i].begin(), cliques[i].end(), std::back_inserter(cliques[l]));
 			L.emplace_back(i, l, t);
 		}
 
@@ -167,29 +164,31 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 	std::set<unsigned> seen;
 
 	// Add all cliques to the graph
-	for (const auto &q : cliques | boost::adaptors::map_values) {
+	for (const auto &c : cliques) {
 		std::vector<unsigned> nnew;
+		std::vector<unsigned> old;
 
-		for (const auto v : q) {
+		for (const auto v : c) {
 			if (seen.find(v) == seen.end()) {
 				seen.insert(v);
 				nnew.push_back(v);
-			}
-
-			for (auto a = nnew.begin(); a != nnew.end(); a++) {
-				for (auto b = nnew.begin(); b != a; b++) {
-					auto va = vertices[*a], vb = vertices[*b];
-					if (!boost::edge(va, vb, g).second)
-						boost::add_edge(va, vb, g);
-				}
+			} else {
+				old.push_back(v);
 			}
 		}
-	}
 
-	// Connect all cliques together
-	for (auto a = seen.begin(); a != seen.end(); a++) {
-		for (auto b = seen.begin(); b != a; b++) {
-			auto va = vertices[*a], vb = vertices[*b];
+		// Add all edges of the clique
+		for (auto a = nnew.begin(); a != nnew.end(); a++) {
+			for (auto b = nnew.begin(); b != a; b++) {
+				const auto va = vertices[*a], vb = vertices[*b];
+				if (!boost::edge(va, vb, g).second)
+					boost::add_edge(va, vb, g);
+			}
+		}
+
+		// Connect this clique to another clique
+		if (old.size() > 0 && nnew.size() > 0 && old[0] != nnew[0]) {
+			const auto va = vertices[old[0]], vb = vertices[nnew[0]];
 			if (!boost::edge(va, vb, g).second)
 				boost::add_edge(va, vb, g);
 		}
