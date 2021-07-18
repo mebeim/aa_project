@@ -13,4 +13,10 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install libboost-all-dev -yq
     - name: Run unit tests
-      run: make run_tests
+      run: make run_tests COVERAGE=1
+    - name: Upload coverage data to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests
+        fail_ci_if_error: true

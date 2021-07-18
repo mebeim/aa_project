@@ -13,11 +13,15 @@ GOOGLE_BENCHMARK_LIB := $(GOOGLE_BENCHMARK_DIR)/build/src/libbenchmark.a
 
 CXX            := g++
 CXXFLAGS       := --std=c++17 -Wall -Wextra -pedantic -I$(SRC_DIR)
-CXXFLAGS.test  := $(CXXFLAGS) -O2 -g -fsanitize=address -fsanitize=undefined
+CXXFLAGS.test  := $(CXXFLAGS) -g -fsanitize=address -fsanitize=undefined
 CXXFLAGS.bench := $(CXXFLAGS) -Ofast -I$(GOOGLE_BENCHMARK_DIR)/include
 LDFLAGS        := -lboost_graph
 LDFLAGS.test   := $(LDFLAGS) -lboost_unit_test_framework
 LDFLAGS.bench  := $(LDFLAGS) -L$(dir $(GOOGLE_BENCHMARK_LIB)) -lbenchmark -lpthread
+
+ifdef COVERAGE
+	CXXFLAGS.test += --coverage
+endif
 
 .PHONY: default clean run_tests run_benchmarks
 
@@ -25,6 +29,9 @@ default: $(UNIT_TEST_EXE) $(BENCH_EXE)
 
 run_tests: $(UNIT_TEST_EXE)
 	./$< -l test_suite -r detailed
+ifdef COVERAGE
+	gcov *.gcda 
+endif
 
 run_benchmarks: $(BENCH_EXE)
 	./$<
@@ -55,4 +62,8 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 clean:
-	rm -fr $(BUILD_DIR)
+	rm -fr $(UNIT_TEST_EXE) $(BENCH_EXE) *.gcno *.gcda *.gcov
+
+dist-clean:
+	rm -fr $(BUILD_DIR) *.gcno *.gcda *.gcov
+
