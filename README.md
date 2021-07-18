@@ -14,6 +14,7 @@ I've implemented the algorithms as a generic header-only C++ template library
 [Boost Graph Library][lib-boost-graph], supporting all the different Graph
 implementations provided by it.
 
+
 Implemented algorithms
 ----------------------
 
@@ -48,40 +49,42 @@ I've discovered the following errors in the algorithms described in the paper:
    to the queue if not already present. Adding vertices twice will lead to wrong
    labeling.
 
+
 Building
 --------
 
 This is a header-only template library and thus *does not need any building*.
 The only dependency when using this library is [Boost Graph][lib-boost-graph]
-(development headers and dynamic library). Compile with (at least) `-std=c++17`
-and link with `-lboost_graph`.
+(development headers and dynamic library, packaged on any major Linux distro),
+also needed for testing and benchmarking.
 
-Building unit tests requires [Boost Graph][lib-boost-graph] and
-[Boost Test][lib-boost-test] developement headers and dynamic libraries,
-packaged on any major Linux distro (e.g. `libboost-dev` on Debian/Ubuntu which
-provides the complete Boost library).
+When using this library, compile with **at least `-std=c++17`** and
+**link with `-lboost_graph`**.
 
-Building benchmarks requires the [Google Benchmark][lib-benchmark] development
-headers and static library. This is expected to be manually cloned and built in
-the `benchmark/` directory (in the same directory of the `Makefile`).
-
-Build using `make`, output binaries in the `build/` directory:
-
-```bash
-make                # build test and benchmark binaries
-make run_tests      # build and run tests only
-make run_benchmark  # build and run benchmarks only
-```
 
 Testing
 -------
 
-TODO!
+Building unit tests (in addition to Boost Graph) also requires the
+[Boost Test][lib-boost-test] developement headers and dynamic library.
 
-Benchmarks
-----------
+```bash
+make run_tests
+```
 
-TODO!
+
+Benchmarking
+------------
+
+Building benchmarks (in addition to Boost Graph) also requires the
+[Google Benchmark][lib-benchmark] development headers and static library. This
+is expected to be cloned in `build/benchmark` and correctly built using `cmake`.
+The `Makefile` in this repository will automatically try to clone and build this
+as needed.
+
+```bash
+make run_benchmarks
+```
 
 ---
 
