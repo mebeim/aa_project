@@ -179,18 +179,13 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 
 		// Add all edges of the clique
 		for (auto a = nnew.begin(); a != nnew.end(); a++) {
-			for (auto b = nnew.begin(); b != a; b++) {
-				const auto va = vertices[*a], vb = vertices[*b];
-				if (!boost::edge(va, vb, g).second)
-					boost::add_edge(va, vb, g);
-			}
+			for (auto b = nnew.begin(); b != a; b++)
+				boost::add_edge(vertices[*a], vertices[*b], g);
 		}
 
 		// Connect this clique to another clique
 		if (old.size() > 0 && nnew.size() > 0 && old[0] != nnew[0]) {
-			const auto va = vertices[old[0]], vb = vertices[nnew[0]];
-			if (!boost::edge(va, vb, g).second)
-				boost::add_edge(va, vb, g);
+			boost::add_edge(vertices[old[0]], vertices[nnew[0]], g);
 		}
 	}
 
