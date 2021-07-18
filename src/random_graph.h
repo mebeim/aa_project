@@ -150,7 +150,7 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 		if (m + d <= max_edges) {
 			ds.union_set(ra, rb);
 			std::copy(cb.begin(), cb.end(), std::back_inserter(ca));
-			cb.empty();
+			cb.clear();
 			m += d;
 		}
 	}
