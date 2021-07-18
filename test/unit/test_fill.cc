@@ -55,6 +55,7 @@ BOOST_AUTO_TEST_CASE(known_graph) {
 
 	BOOST_REQUIRE(!boost::edge(v[0], v[3], g).second);
 	BOOST_REQUIRE(!boost::edge(v[1], v[2], g).second);
+	BOOST_CHECK(!is_perfect_elimination_order(g, order));
 
 	auto fillin = fill_in(g, order);
 	fill(g, order);
