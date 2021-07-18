@@ -3,6 +3,7 @@ Algorithmic aspects of vertex elimination on graphs
 
 [![license][license-badge]][license-link]
 [![ci][ci-badge]][ci-link]
+[![codecov][codecov-badge]][codecov-link]
 
 This repo contains the optional project for the Advanced Algorithms part of the
 Computer Science and Engineering Master's Degree course
@@ -75,6 +76,14 @@ Building unit tests (in addition to Boost Graph) also requires the
 make run_tests
 ```
 
+To also compile and run tests with coverage support to produce coverage info
+(needs `gcov`):
+
+```bash
+make clean  # if already compiled
+make run_tests COVERAGE=1
+```
+
 
 Benchmarking
 ------------
@@ -105,3 +114,5 @@ make run_benchmarks
 [license-link]:            https://github.com/mebeim/aa_project/blob/master/LICENSE
 [ci-badge]:                https://github.com/mebeim/aa_project/actions/workflows/ci.yml/badge.svg
 [ci-link]:                 https://github.com/mebeim/aa_project/actions/workflows/ci.yml
+[codecov-badge]:           https://codecov.io/gh/mebeim/aa_project/branch/master/graphs/badge.svg?branch=master&token=GZ24QWSZZ8
+[codecov-link]:            https://codecov.io/gh/mebeim/aa_project
