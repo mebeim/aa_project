@@ -24,9 +24,13 @@ ifdef COVERAGE
 	CXXFLAGS.test += --coverage
 endif
 
-.PHONY: default clean run_tests run_benchmarks
+.PHONY: default clean tests benchmarks run_tests run_benchmarks
 
-default: $(UNIT_TEST_EXE) $(BENCH_TIME_EXE)
+default: tests benchmarks
+
+tests: $(UNIT_TEST_EXE)
+
+benchmarks: $(BENCH_TIME_EXE)
 
 run_tests: $(UNIT_TEST_EXE)
 	./$< -l test_suite -r detailed

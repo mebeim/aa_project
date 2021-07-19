@@ -73,14 +73,15 @@ Building unit tests (in addition to Boost Graph) also requires the
 [Boost Test][lib-boost-test] developement headers and dynamic library.
 
 ```bash
-make run_tests
+make tests     # build only
+make run_tests # build and run
 ```
 
 To also compile and run tests with coverage support to produce coverage info
 (needs `gcov`):
 
 ```bash
-make clean  # if already compiled
+make clean # if already compiled
 make run_tests COVERAGE=1
 ```
 
@@ -95,7 +96,8 @@ The `Makefile` in this repository will automatically try to clone and build this
 as needed.
 
 ```bash
-make run_benchmarks
+make benchmarks     # build only
+make run_benchmarks # build and run
 ```
 
 ---
