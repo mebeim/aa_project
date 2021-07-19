@@ -54,12 +54,16 @@ void lex_p_random_graph(benchmark::State& state) {
 	state.SetComplexityN(n);
 }
 
+#ifndef NTHREADS
+#define NTHREADS 1
+#endif
+
 #define bench(func, num, div, start, end, step) \
 	BENCHMARK_TEMPLATE(func , num, div)         \
 		->DenseRange(start, end, step)          \
 		->Complexity(benchmark::oN)             \
 		->Unit(benchmark::kMillisecond)         \
-		->Threads(16)
+		->Threads(NTHREADS)
 
 bench(fill_in_random_graph, 1, 10, 100, 1000, 100); // edge density  10%
 bench(fill_in_random_graph, 1,  4, 100, 1000, 100); // edge density  25%

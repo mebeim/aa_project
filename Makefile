@@ -2,12 +2,12 @@ SRC_DIR   := src
 TEST_DIR  := test
 BUILD_DIR := build
 
-SRCS           := $(wildcard $(SRC_DIR)/*)
-UNIT_TEST_SRCS := $(wildcard $(TEST_DIR)/unit/*.cc)
-UNIT_TEST_EXE  := $(BUILD_DIR)/test
-BENCH_TIME_SRC := $(TEST_DIR)/bench/bench_time.cc
-BENCH_TIME_EXE := $(BUILD_DIR)/bench_time
-BENCH_TIME_OUT := $(BUILD_DIR)/bench_time_out.json
+SRCS            := $(wildcard $(SRC_DIR)/*)
+UNIT_TEST_SRCS  := $(wildcard $(TEST_DIR)/unit/*.cc)
+UNIT_TEST_EXE   := $(BUILD_DIR)/test
+BENCH_TIME_SRC  := $(TEST_DIR)/bench/bench_time.cc
+BENCH_TIME_EXE  := $(BUILD_DIR)/bench_time
+BENCH_TIME_OUT  := $(BUILD_DIR)/bench_time_out.json
 
 GOOGLE_BENCHMARK_DIR := $(BUILD_DIR)/benchmark
 GOOGLE_BENCHMARK_LIB := $(GOOGLE_BENCHMARK_DIR)/build/src/libbenchmark.a
@@ -22,6 +22,10 @@ LDFLAGS.bench  := $(LDFLAGS) -L$(dir $(GOOGLE_BENCHMARK_LIB)) -lbenchmark -lpthr
 
 ifdef COVERAGE
 	CXXFLAGS.test += --coverage
+endif
+
+ifdef NTHREADS
+	CXXFLAGS.bench += -DNTHREADS=$(NTHREADS)
 endif
 
 .PHONY: default clean tests benchmarks run_tests run_benchmarks

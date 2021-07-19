@@ -96,8 +96,9 @@ The `Makefile` in this repository will automatically try to clone and build this
 as needed.
 
 ```bash
-make benchmarks     # build only
-make run_benchmarks # build and run
+make benchmarks                 # build only
+make run_benchmarks             # build and run
+make run_benchmarks NTHREADS=16 # specify number of benchmarking threads to use (default: 1)
 ```
 
 ---
