@@ -5,8 +5,9 @@ BUILD_DIR := build
 SRCS           := $(wildcard $(SRC_DIR)/*)
 UNIT_TEST_SRCS := $(wildcard $(TEST_DIR)/unit/*.cc)
 UNIT_TEST_EXE  := $(BUILD_DIR)/test
-BENCH_SRCS     := $(wildcard $(TEST_DIR)/bench/*.cc)
-BENCH_EXE      := $(BUILD_DIR)/bench
+BENCH_TIME_SRC := $(TEST_DIR)/bench/bench_time.cc
+BENCH_TIME_EXE := $(BUILD_DIR)/bench_time
+BENCH_TIME_OUT := $(BUILD_DIR)/bench_time_out.json
 
 GOOGLE_BENCHMARK_DIR := $(BUILD_DIR)/benchmark
 GOOGLE_BENCHMARK_LIB := $(GOOGLE_BENCHMARK_DIR)/build/src/libbenchmark.a
@@ -25,21 +26,21 @@ endif
 
 .PHONY: default clean run_tests run_benchmarks
 
-default: $(UNIT_TEST_EXE) $(BENCH_EXE)
+default: $(UNIT_TEST_EXE) $(BENCH_TIME_EXE)
 
 run_tests: $(UNIT_TEST_EXE)
 	./$< -l test_suite -r detailed
 ifdef COVERAGE
-	gcov *.gcda 
+	gcov *.gcda
 endif
 
-run_benchmarks: $(BENCH_EXE)
-	./$<
+run_benchmarks: $(BENCH_TIME_EXE)
+	./$< --benchmark_out=$(BENCH_TIME_OUT) --benchmark_out_format=json
 
 $(UNIT_TEST_EXE): $(UNIT_TEST_SRCS) $(SRCS) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS.test) $(filter %.cc,$^) $(LDFLAGS.test) -o $@
 
-$(BENCH_EXE): $(GOOGLE_BENCHMARK_LIB) $(BENCH_SRCS) $(SRCS) | $(BUILD_DIR)
+$(BENCH_TIME_EXE): $(GOOGLE_BENCHMARK_LIB) $(BENCH_TIME_SRC) $(SRCS) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS.bench) $(filter %.cc,$^) $(LDFLAGS.bench) -o $@
 
 $(GOOGLE_BENCHMARK_DIR):
@@ -62,8 +63,7 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 clean:
-	rm -fr $(UNIT_TEST_EXE) $(BENCH_EXE) *.gcno *.gcda *.gcov
+	rm -fr $(UNIT_TEST_EXE) $(BENCH_TIME_EXE) $(BENCH_TIME_OUT) *.gcno *.gcda *.gcov
 
 dist-clean:
 	rm -fr $(BUILD_DIR) *.gcno *.gcda *.gcov
-
