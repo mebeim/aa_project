@@ -35,7 +35,7 @@ Graph gen_random_connected_graph(unsigned n_vertices, double edge_prob) {
 	typedef VertexSizeT<Graph> VertexSz;
 
 	static std::mt19937 gen{std::random_device{}()};
-	static std::uniform_real_distribution<float> distr_real(0.0, 1.0);
+	static std::uniform_real_distribution<double> distr_real(0.0, 1.0);
 	static auto rand_01 = std::bind(distr_real, gen);
 
 	Graph g;
