@@ -38,11 +38,8 @@ Graph gen_random_connected_graph(unsigned n_vertices, double edge_prob) {
 	static std::uniform_real_distribution<double> distr_real(0.0, 1.0);
 	static auto rand_01 = std::bind(distr_real, gen);
 
-	Graph g;
-	std::vector<Vertex> vertices(n_vertices);
-
-	for (unsigned i = 0; i < n_vertices; i++)
-		vertices[i] = boost::add_vertex(g);
+	Graph g(n_vertices);
+	auto vertices = std::make_from_tuple<std::vector<Vertex>>(boost::vertices(g));
 
 	// Generate undirected edges with given probability
 	for (auto v = vertices.begin() + 1; v != vertices.end(); v++) {
@@ -155,13 +152,9 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 		}
 	}
 
-	Graph g;
-	std::vector<VertexDesc<Graph>> vertices(n_vertices + 1);
-
-	for (unsigned i = 1; i <= n_vertices; i++)
-		vertices[i] = boost::add_vertex(g);
-
-	std::set<unsigned> seen;
+	Graph g(n_vertices);
+	auto vertices = std::make_from_tuple<std::vector<VertexDesc<Graph>>>(boost::vertices(g));
+	std::unordered_set<unsigned> seen;
 
 	// Add all cliques to the graph
 	for (const auto &c : cliques) {
@@ -180,12 +173,12 @@ Graph gen_random_chordal_graph(unsigned n_vertices, unsigned max_edges) {
 		// Add all edges of the clique
 		for (auto a = nnew.begin(); a != nnew.end(); a++) {
 			for (auto b = nnew.begin(); b != a; b++)
-				boost::add_edge(vertices[*a], vertices[*b], g);
+				boost::add_edge(vertices[*a - 1], vertices[*b - 1], g);
 		}
 
 		// Connect this clique to another clique
 		if (old.size() > 0 && nnew.size() > 0 && old[0] != nnew[0]) {
-			boost::add_edge(vertices[old[0]], vertices[nnew[0]], g);
+			boost::add_edge(vertices[old[0] - 1], vertices[nnew[0] - 1], g);
 		}
 	}
 
