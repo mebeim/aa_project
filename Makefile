@@ -24,10 +24,6 @@ ifdef COVERAGE
 	CXXFLAGS.test += --coverage
 endif
 
-ifdef NTHREADS
-	CXXFLAGS.bench += -DNTHREADS=$(NTHREADS)
-endif
-
 .PHONY: default clean tests benchmarks run_tests run_benchmarks
 
 default: tests benchmarks
