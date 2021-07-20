@@ -12,6 +12,7 @@ void fill_in_random_graph(benchmark::State& state) {
 	const unsigned v = state.range(0);
 	auto g = gen_random_connected_graph<Graph>(v, (double)num/div);
 	auto o = gen_random_order(g);
+	assert(boost::num_vertices(g) == v);
 
 	// Benchmark fill_in() instead of fill() as it is the exact same function as
 	// fill(), except that it does not modify the graph, and therefore does not
@@ -22,6 +23,7 @@ void fill_in_random_graph(benchmark::State& state) {
 
 	auto n = boost::num_vertices(g) + boost::num_edges(g);
 	state.counters["n"] = n;
+	state.counters["v"] = boost::num_vertices(g);
 	state.SetComplexityN(n);
 }
 
@@ -29,12 +31,14 @@ template <unsigned num, unsigned div>
 void lex_m_random_graph(benchmark::State& state) {
 	const unsigned v = state.range(0);
 	auto g = gen_random_connected_graph<Graph>(v, (double)num/div);
+	assert(boost::num_vertices(g) == v);
 
 	for (auto _ : state)
 		benchmark::DoNotOptimize(lex_m(g));
 
 	const auto n = boost::num_vertices(g) * boost::num_edges(g);
 	state.counters["n"] = n;
+	state.counters["v"] = boost::num_vertices(g);
 	state.SetComplexityN(n);
 }
 
@@ -42,6 +46,7 @@ template <unsigned num, unsigned div>
 void lex_p_random_graph(benchmark::State& state) {
 	const unsigned v = state.range(0);
 	auto g = gen_random_connected_graph<Graph>(v, (double)num/div);
+	assert(boost::num_vertices(g) == v);
 
 	if (num != div)
 		fill(g, lex_m(g));
@@ -51,6 +56,7 @@ void lex_p_random_graph(benchmark::State& state) {
 
 	auto n = boost::num_vertices(g) + boost::num_edges(g);
 	state.counters["n"] = n;
+	state.counters["v"] = boost::num_vertices(g);
 	state.SetComplexityN(n);
 }
 
