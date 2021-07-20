@@ -26,11 +26,11 @@ The authors of this paper propose three algorithms for efficient computation of
 vertex elimination orderings on *simple, connected, undirected* (SCU for
 brevity) graphs:
 
-- FILL: an *O(V+E)* algorithm to compute the
+- FILL ([`src/fill.h`](src/fill.h)): an *O(V+E)* algorithm to compute the
   [chordal completion][wiki-chordal-completion] of any SCU graph.
-- LEX M: an *O(VE)* algorithm to compute a minimal vertex elimination order of
+- LEX M ([`src/lex_m.h`](src/lex_m.h)): an *O(VE)* algorithm to compute a minimal vertex elimination order of
   any SCU graph.
-- LEX P: an *O(V+E)* algorithm to compute a perfect vertex elimination order for
+- LEX P ([`src/lex_p.h`](src/lex_p.h)): an *O(V+E)* algorithm to compute a perfect vertex elimination order for
   a [chordal graph][wiki-chordal-graph]. This algorithm is also known as
   [lexicographic breadth-first search][wiki-lex-p].
 
