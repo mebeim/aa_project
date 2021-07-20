@@ -16,6 +16,9 @@ typedef boost::mpl::list<
 	unsigned long
 > value_types;
 
+/**
+ * Ensure that radix_sort() correctly sorts elements.
+ */
 BOOST_AUTO_TEST_CASE_TEMPLATE(radix_sort_works, KeyValueT, value_types) {
 	static std::mt19937 gen{std::random_device{}()};
 	static std::uniform_int_distribution<unsigned> value_dist;
