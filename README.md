@@ -102,6 +102,15 @@ make run_time_benchmarks # build and run only time benchmarks
 make run_mem_benchmarks  # build and run only memory benchmarks
 ```
 
+**Plotting benchmark results** requires Python 3 (>= 3.6) with
+[`numpy`][pypi-numpy], [`matplotlib`][pypi-matplotlib] and
+[`scikit-learn`][pypi-scikit-learn].
+
+```bash
+python3 -m pip install -r test/bench/requirements.txt
+make plot_benchmarks
+```
+
 ---
 
 *Copyright &copy; 2021 Marco Bonelli. Licensed under the Apache License 2.0.*
@@ -111,6 +120,9 @@ make run_mem_benchmarks  # build and run only memory benchmarks
 [lib-boost-graph]:         https://www.boost.org/doc/libs/1_76_0/libs/graph/doc/index.html
 [lib-boost-test]:          https://www.boost.org/doc/libs/1_76_0/libs/test/doc/html/index.html
 [lib-benchmark]:           https://github.com/google/benchmark
+[pypi-numpy]:              https://pypi.org/project/numpy/
+[pypi-matplotlib]:         https://pypi.org/project/matplotlib/
+[pypi-scikit-learn]:       https://pypi.org/project/scikit-learn/
 [wiki-chordal-graph]:      https://en.wikipedia.org/wiki/Chordal_graph
 [wiki-chordal-completion]: https://en.wikipedia.org/wiki/Chordal_completion
 [wiki-lex-p]:              https://en.wikipedia.org/wiki/Lexicographic_breadth-first_search
