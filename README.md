@@ -18,6 +18,9 @@ I've implemented the algorithms as a generic header-only C++ template library
 [Boost Graph Library][lib-boost-graph], supporting all the different Graph
 implementations provided by it.
 
+A brief report in the form of a slideshow used for presentation of the project
+is available [here](report.pdf).
+
 
 Implemented algorithms
 ----------------------
