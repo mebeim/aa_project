@@ -11,7 +11,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Install dependencies
-      run: sudo apt-get install libboost-all-dev -yq
+      run: sudo apt-get install libboost-graph1.71-dev libboost-test1.71-dev -yq
     - name: Run unit tests
       run: make run_tests COVERAGE=1
     - name: Upload coverage data to Codecov
